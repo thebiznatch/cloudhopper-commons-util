@@ -1,23 +1,29 @@
-/**
- * Copyright (C) 2011 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
- * file except in compliance with the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed
- * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
- * CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
-
 package com.cloudhopper.commons.util;
 
+/*
+ * #%L
+ * ch-commons-util
+ * %%
+ * Copyright (C) 2012 Cloudhopper by Twitter
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of a load balanced list that returns items using a weighted, 
@@ -32,10 +38,10 @@ import org.apache.log4j.Logger;
  * NOTE: This class only works for small lists.  You need to assume every
  * call to get the next selection is O(n).
  *
- * @author joelauer
+ * @author joelauer (twitter: @jjlauer or <a href="http://twitter.com/jjlauer" target=window>http://twitter.com/jjlauer</a>)
  */
 public class RoundRobinLoadBalancedList<E> implements LoadBalancedList<E> {
-    private static final Logger logger = Logger.getLogger(RoundRobinLoadBalancedList.class);
+    private static final Logger logger = LoggerFactory.getLogger(RoundRobinLoadBalancedList.class);
 
     private final ArrayList<Node<E>> allItems;
     private final ArrayList<Node<E>> remainingItems;
@@ -47,10 +53,12 @@ public class RoundRobinLoadBalancedList<E> implements LoadBalancedList<E> {
         this.currentIndex = 0;     // index of remaining item to return
     }
 
+    @Override
     public List<Node<E>> getValues() {
         return this.allItems;
     }
 
+    @Override
     public void clear() {
         // remove all items from allitems
         allItems.clear();
@@ -58,11 +66,13 @@ public class RoundRobinLoadBalancedList<E> implements LoadBalancedList<E> {
         this.currentIndex = 0;
     }
 
+    @Override
     public boolean contains(E item) {
         Node<E> newNode = new Node<E>(item);
         return this.allItems.contains(newNode);
     }
 
+    @Override
     public void set(E item, int weight) {
         // if weight of zero, acts just like removing
         if (weight <= 0) {
@@ -99,13 +109,14 @@ public class RoundRobinLoadBalancedList<E> implements LoadBalancedList<E> {
                 // bug fix: if the node just removed was the only node in our
                 // *remaining* items list, then we have a problem.  we need to
                 // check if we should rebuild our remaining items array
-                if (this.remainingItems.size() == 0 && this.allItems.size() > 0) {
+                if (this.remainingItems.isEmpty() && this.allItems.size() > 0) {
                     this.rebuildRemainingItems();
                 }
             }
         }
     }
 
+    @Override
     public void remove(E item) {
         // create a new node we'll use for searching and/or adding
         Node<E> newNode = new Node<E>(item);
@@ -124,7 +135,7 @@ public class RoundRobinLoadBalancedList<E> implements LoadBalancedList<E> {
 
         // safety check -- if there are no more remaining items, but we still
         // have items in our list, rebuild our "remaining items"
-        if (this.remainingItems.size() == 0 && this.allItems.size() > 0) {
+        if (this.remainingItems.isEmpty() && this.allItems.size() > 0) {
             this.rebuildRemainingItems();
         }
     }
@@ -150,6 +161,7 @@ public class RoundRobinLoadBalancedList<E> implements LoadBalancedList<E> {
         this.rebuildRemainingItems();
     }
 
+    @Override
     public int getSize() {
         return this.allItems.size();
     }
@@ -158,17 +170,18 @@ public class RoundRobinLoadBalancedList<E> implements LoadBalancedList<E> {
         return this.remainingItems.size();
     }
 
+    @Override
     public E getNext() {
         // hmm... actually, this is a good safety check to do now -- if allitems
         // is zero, then there is no way we could have a next item
-        if (allItems.size() == 0) {
+        if (allItems.isEmpty()) {
             return null;
         }
 
         // if there are items in "allItems", but remainingItems is still zero
         // then this means some sort of bug occurred since this should be impossible
-        if (remainingItems.size() == 0) {
-            logger.fatal("Impossible bug occurred with RoundRobinLoadBalancedList where allItems > 0, but remainingItems == 0, going to completely internally rebuild everything");
+        if (remainingItems.isEmpty()) {
+            logger.error("Impossible bug occurred with RoundRobinLoadBalancedList where allItems > 0, but remainingItems == 0, going to completely internally rebuild everything");
             resetCountsAndRebuildRemainingItems();
         }
 
@@ -200,7 +213,7 @@ public class RoundRobinLoadBalancedList<E> implements LoadBalancedList<E> {
         }
 
         // if there aren't any more remaining items, rebuid it
-        if (remainingItems.size() == 0) {
+        if (remainingItems.isEmpty()) {
             // rebuild a new remainingItems array
             rebuildRemainingItems();
         }

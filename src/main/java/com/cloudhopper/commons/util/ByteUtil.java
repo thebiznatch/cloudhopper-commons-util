@@ -1,21 +1,29 @@
-/**
- * Copyright (C) 2011 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
- * file except in compliance with the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed
- * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
- * CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
-
 package com.cloudhopper.commons.util;
+
+/*
+ * #%L
+ * ch-commons-util
+ * %%
+ * Copyright (C) 2012 Cloudhopper by Twitter
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 
 /**
  * Utility class for methods to handle bytes.
+ * 
+ * @author joelauer (twitter: @jjlauer or <a href="http://twitter.com/jjlauer" target=window>http://twitter.com/jjlauer</a>)
  */
 public class ByteUtil {
 	
@@ -33,7 +41,7 @@ public class ByteUtil {
 
         int index = 0;
         for (int i = 0; i < data.length(); i += 2) {
-            StringBuffer x = new StringBuffer(data.substring(i, i + 2));
+            StringBuilder x = new StringBuilder(data.substring(i, i + 2));
             x.reverse();
             buf[index] = ByteUtil.decodeHex(x.toString(), 2)[0];
             index++;
@@ -51,12 +59,12 @@ public class ByteUtil {
      * to read.
      */
     public static String decodeBcd(byte[] data, int offset, int len) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         // loop through byte array until we get to the end or an F
         for (int i = offset; i < (offset + len); i++) {
             // get buffer
-            StringBuffer x = new StringBuffer(encodeHex(data[i]));
+            StringBuilder x = new StringBuilder(encodeHex(data[i]));
             // reverse it
             x.reverse();
             // add it to the data
@@ -148,7 +156,7 @@ public class ByteUtil {
     @Deprecated
     public static String encodeHex(byte[] data, char delimiter) {
         // the result
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         short val = 0;
 
@@ -171,7 +179,7 @@ public class ByteUtil {
             return data;
         }
         // a temp string
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         // add all the zeros
         for (int i = 0; i < num; i++) {
             result.append('0');

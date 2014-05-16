@@ -1,35 +1,44 @@
-/**
- * Copyright (C) 2011 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
- * file except in compliance with the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed
- * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
- * CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
-
 package com.cloudhopper.commons.util;
+
+/*
+ * #%L
+ * ch-commons-util
+ * %%
+ * Copyright (C) 2012 Cloudhopper by Twitter
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 
 import com.cloudhopper.commons.util.filefilter.FileNameDateTimeFilter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests FileUtil class.
  * 
- * @author joelauer
+ * @author joelauer (twitter: @jjlauer or <a href="http://twitter.com/jjlauer" target=window>http://twitter.com/jjlauer</a>)
  */
 public class FileUtilTest {
-    private static final Logger logger = Logger.getLogger(FileUtilTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileUtilTest.class);
+    
+    private static final String TEST_FILE = "CHANGELOG.md";
 
     @Test
     public void copyAndEquals() throws Exception {
@@ -39,10 +48,10 @@ public class FileUtilTest {
         //
 
         //  file to use for tests
-        File sourceFile = new File("ReleaseNotes.txt");
+        File sourceFile = new File(TEST_FILE);
 
         // copy original source to build directory -- becomes our actual source file
-        File targetFile = new File("build", sourceFile.getName() + ".2");
+        File targetFile = new File("target", sourceFile.getName() + ".2");
 
         // in case "ant clean" wasn't run before this unit test, let's make sure
         // this file is deleted before we copy
@@ -106,7 +115,7 @@ public class FileUtilTest {
     @Test(expected=FileNotFoundException.class)
     public void findFilesThrowsException0() throws Exception {
         // samplelogs2 does not exist!
-        FileUtil.findFiles(new File("build/samplelogs2"), null);
+        FileUtil.findFiles(new File("target/samplelogs2"), null);
     }
 
     @Test(expected=FileNotFoundException.class)
@@ -120,12 +129,12 @@ public class FileUtilTest {
     public void findFiles() throws Exception {
         // samplelogs directory must exist -- needs to be created and populated
         // by the ant build process -- this should match every file by default
-        File[] f0 = FileUtil.findFiles(new File("build/samplelogs"), new AllFileMatcher());
+        File[] f0 = FileUtil.findFiles(new File("target/samplelogs"), new AllFileMatcher());
         // exactly 4 files should exist starting from today's date and then
         // the preceeding 3 days before that as well
         Assert.assertEquals(4, f0.length);
 
-        f0 = FileUtil.findFiles(new File("build/samplelogs"), new NoFileMatcher());
+        f0 = FileUtil.findFiles(new File("target/samplelogs"), new NoFileMatcher());
         // no files should have matched
         Assert.assertEquals(0, f0.length);
     }
@@ -152,7 +161,7 @@ public class FileUtilTest {
         //
         // create sample directory with a couple entries
         //
-        File targetDir = new File("build/sample/fileNameDateTimeComparatorClass");
+        File targetDir = new File("target/sample/fileNameDateTimeComparatorClass");
         targetDir.mkdirs();
 
         File file0 = new File(targetDir, "sample1-2009-06-25.log");

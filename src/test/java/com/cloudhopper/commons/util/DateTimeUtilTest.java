@@ -1,34 +1,38 @@
-/**
- * Copyright (C) 2011 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
- * file except in compliance with the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed
- * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
- * CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
-
 package com.cloudhopper.commons.util;
+
+/*
+ * #%L
+ * ch-commons-util
+ * %%
+ * Copyright (C) 2012 Cloudhopper by Twitter
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 
 // third party imports
 import org.junit.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
-// my imports
-//import net.cloudhopper.commons.util.ByteBuffer;
-
 /**
  *
- * @author joelauer
+ * @author joelauer (twitter: @jjlauer or <a href="http://twitter.com/jjlauer" target=window>http://twitter.com/jjlauer</a>)
  */
 public class DateTimeUtilTest {
-    private static final Logger logger = Logger.getLogger(DateTimeUtilTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(DateTimeUtilTest.class);
 
     @Test
     public void parseEmbedded() throws Exception {
@@ -221,6 +225,120 @@ public class DateTimeUtilTest {
         //
         DateTime dt2 = DateTimeUtil.floorToHour(null);
         Assert.assertNull(dt2);
+    }
+    
+    @Test
+    public void floorToHalfHour() throws Exception {
+        // create a reference datetime
+        DateTime dt0 = new DateTime(2009,6,24,23,29,30,789,DateTimeZone.UTC);
+
+        Assert.assertNull(DateTimeUtil.floorToHalfHour(null));
+        
+        // floor to nearest half hour
+        DateTime dt1 = DateTimeUtil.floorToHalfHour(dt0);
+
+        Assert.assertEquals(2009, dt1.getYear());
+        Assert.assertEquals(6, dt1.getMonthOfYear());
+        Assert.assertEquals(24, dt1.getDayOfMonth());
+        Assert.assertEquals(23, dt1.getHourOfDay());
+        Assert.assertEquals(0, dt1.getMinuteOfHour());
+        Assert.assertEquals(0, dt1.getSecondOfMinute());
+        Assert.assertEquals(0, dt1.getMillisOfSecond());
+        Assert.assertEquals(DateTimeZone.UTC, dt1.getZone());
+
+        DateTime dt3 = DateTimeUtil.floorToHalfHour(new DateTime(2009,6,24,10,0,0,0));
+        Assert.assertEquals(new DateTime(2009,6,24,10,0,0,0), dt3);
+
+        dt3 = DateTimeUtil.floorToHalfHour(new DateTime(2009,6,24,10,1,23,456));
+        Assert.assertEquals(new DateTime(2009,6,24,10,0,0,0), dt3);
+
+        dt3 = DateTimeUtil.floorToHalfHour(new DateTime(2009,6,24,10,30,12,56));
+        Assert.assertEquals(new DateTime(2009,6,24,10,30,0,0), dt3);
+
+        dt3 = DateTimeUtil.floorToHalfHour(new DateTime(2009,6,24,10,59,59,999));
+        Assert.assertEquals(new DateTime(2009,6,24,10,30,0,0), dt3);
+
+        dt3 = DateTimeUtil.floorToHalfHour(new DateTime(2009,6,24,10,55,59,999));
+        Assert.assertEquals(new DateTime(2009,6,24,10,30,0,0), dt3);
+
+        dt3 = DateTimeUtil.floorToHalfHour(new DateTime(2009,6,24,10,46,59,999));
+        Assert.assertEquals(new DateTime(2009,6,24,10,30,0,0), dt3);
+    }
+    
+    @Test
+    public void floorToQuarterHour() throws Exception {
+        // create a reference datetime
+        DateTime dt0 = new DateTime(2009,6,24,23,29,30,789,DateTimeZone.UTC);
+
+        Assert.assertNull(DateTimeUtil.floorToQuarterHour(null));
+        
+        // floor to nearest half hour
+        DateTime dt1 = DateTimeUtil.floorToQuarterHour(dt0);
+
+        Assert.assertEquals(2009, dt1.getYear());
+        Assert.assertEquals(6, dt1.getMonthOfYear());
+        Assert.assertEquals(24, dt1.getDayOfMonth());
+        Assert.assertEquals(23, dt1.getHourOfDay());
+        Assert.assertEquals(15, dt1.getMinuteOfHour());
+        Assert.assertEquals(0, dt1.getSecondOfMinute());
+        Assert.assertEquals(0, dt1.getMillisOfSecond());
+        Assert.assertEquals(DateTimeZone.UTC, dt1.getZone());
+
+        DateTime dt3 = DateTimeUtil.floorToQuarterHour(new DateTime(2009,6,24,10,0,0,0));
+        Assert.assertEquals(new DateTime(2009,6,24,10,0,0,0), dt3);
+
+        dt3 = DateTimeUtil.floorToQuarterHour(new DateTime(2009,6,24,10,1,23,456));
+        Assert.assertEquals(new DateTime(2009,6,24,10,0,0,0), dt3);
+
+        dt3 = DateTimeUtil.floorToQuarterHour(new DateTime(2009,6,24,10,30,12,56));
+        Assert.assertEquals(new DateTime(2009,6,24,10,30,0,0), dt3);
+
+        dt3 = DateTimeUtil.floorToQuarterHour(new DateTime(2009,6,24,10,59,59,999));
+        Assert.assertEquals(new DateTime(2009,6,24,10,45,0,0), dt3);
+
+        dt3 = DateTimeUtil.floorToQuarterHour(new DateTime(2009,6,24,10,55,59,999));
+        Assert.assertEquals(new DateTime(2009,6,24,10,45,0,0), dt3);
+
+        dt3 = DateTimeUtil.floorToQuarterHour(new DateTime(2009,6,24,10,46,59,999));
+        Assert.assertEquals(new DateTime(2009,6,24,10,45,0,0), dt3);
+    }
+    
+    @Test
+    public void floorToTenMinutes() throws Exception {
+        // create a reference datetime
+        DateTime dt0 = new DateTime(2009,6,24,23,29,30,789,DateTimeZone.UTC);
+
+        Assert.assertNull(DateTimeUtil.floorToTenMinutes(null));
+        
+        // floor to nearest half hour
+        DateTime dt1 = DateTimeUtil.floorToTenMinutes(dt0);
+
+        Assert.assertEquals(2009, dt1.getYear());
+        Assert.assertEquals(6, dt1.getMonthOfYear());
+        Assert.assertEquals(24, dt1.getDayOfMonth());
+        Assert.assertEquals(23, dt1.getHourOfDay());
+        Assert.assertEquals(20, dt1.getMinuteOfHour());
+        Assert.assertEquals(0, dt1.getSecondOfMinute());
+        Assert.assertEquals(0, dt1.getMillisOfSecond());
+        Assert.assertEquals(DateTimeZone.UTC, dt1.getZone());
+
+        DateTime dt3 = DateTimeUtil.floorToTenMinutes(new DateTime(2009,6,24,10,0,0,0));
+        Assert.assertEquals(new DateTime(2009,6,24,10,0,0,0), dt3);
+
+        dt3 = DateTimeUtil.floorToTenMinutes(new DateTime(2009,6,24,10,1,23,456));
+        Assert.assertEquals(new DateTime(2009,6,24,10,0,0,0), dt3);
+
+        dt3 = DateTimeUtil.floorToTenMinutes(new DateTime(2009,6,24,10,30,12,56));
+        Assert.assertEquals(new DateTime(2009,6,24,10,30,0,0), dt3);
+
+        dt3 = DateTimeUtil.floorToTenMinutes(new DateTime(2009,6,24,10,59,59,999));
+        Assert.assertEquals(new DateTime(2009,6,24,10,50,0,0), dt3);
+
+        dt3 = DateTimeUtil.floorToTenMinutes(new DateTime(2009,6,24,10,55,59,999));
+        Assert.assertEquals(new DateTime(2009,6,24,10,50,0,0), dt3);
+
+        dt3 = DateTimeUtil.floorToTenMinutes(new DateTime(2009,6,24,10,46,59,999));
+        Assert.assertEquals(new DateTime(2009,6,24,10,40,0,0), dt3);
     }
 
     @Test
